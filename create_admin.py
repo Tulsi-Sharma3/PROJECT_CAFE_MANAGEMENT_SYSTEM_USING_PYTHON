@@ -4,19 +4,18 @@ from database.db import get_connection
 connection = get_connection()
 cursor = connection.cursor()
 
+username = "admin"
 password = generate_password_hash("admin123")
 
-cursor.execute(
-    """
-    INSERT INTO users(username,password)
-    VALUES(%s,%s)
-    """,
-    ("admin", password)
-)
+query = """
+INSERT INTO users (username, password)
+VALUES (%s, %s)
+"""
 
+cursor.execute(query, (username, password))
 connection.commit()
 
-print("Admin Created Successfully!")
+print("✅ Admin user created successfully!")
 
 cursor.close()
 connection.close()
