@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Orders
+{% endblock %}
+
+{% block content %}
+
+<h2>Order History</h2>
+
+<a href="/add-order">
+    <button>Create Order</button>
+</a>
+
+<br><br>
+
+<table border="1" cellpadding="10">
+
+<tr>
+    <th>Order ID</th>
+    <th>Customer</th>
+    <th>Date</th>
+    <th>Total</th>
+</tr>
+
+{% for order in orders %}
+
+<tr>
+
+<td>{{ order.id }}</td>
+<td>{{ order.customer_name }}</td>
+<td>{{ order.order_date }}</td>
+<td>₹{{ order.total_amount }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

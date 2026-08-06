@@ -19,9 +19,6 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-
-        # get_connection()
-        # cursor = db.cursor(dictionary=True)
         connection = get_connection()
         cursor = connection.cursor(dictionary=True)
 

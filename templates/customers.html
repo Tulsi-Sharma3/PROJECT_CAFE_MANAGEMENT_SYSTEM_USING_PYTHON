@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+Customers
+{% endblock %}
+
+{% block content %}
+
+<h2>Customer Management</h2>
+
+<a href="/add-customer">
+    <button>Add Customer</button>
+</a>
+
+<br><br>
+
+<form method="GET">
+    <input type="text"
+           name="search"
+           placeholder="Search Customer"
+           value="{{ search if search else '' }}">
+    <button type="submit">Search</button>
+</form>
+
+<br>
+
+<table border="1" cellpadding="10">
+
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Email</th>
+    <th>Action</th>
+</tr>
+
+{% for customer in customers %}
+
+<tr>
+
+<td>{{ customer.id }}</td>
+<td>{{ customer.customer_name }}</td>
+<td>{{ customer.phone }}</td>
+<td>{{ customer.email }}</td>
+
+<td>
+    <a href="/edit-customer/{{ customer.id }}">Edit</a> |
+    <a href="/delete-customer/{{ customer.id }}"
+       onclick="return confirm('Delete this customer?')">
+       Delete
+    </a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

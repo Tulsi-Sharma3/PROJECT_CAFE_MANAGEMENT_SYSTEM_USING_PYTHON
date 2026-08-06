@@ -31,7 +31,9 @@
 # UPDATE:
 from flask import Flask,render_template, session, redirect
 from routes.auth import auth
-
+from routes.product import product
+from routes.customer import customer
+from routes.order import order
 
 app=Flask(__name__)
 
@@ -39,7 +41,9 @@ app.secret_key="REMOVED"
 
 
 app.register_blueprint(auth)
-
+app.register_blueprint(product)
+app.register_blueprint(customer)
+app.register_blueprint(order)
 
 @app.route("/dashboard")
 def dashboard():

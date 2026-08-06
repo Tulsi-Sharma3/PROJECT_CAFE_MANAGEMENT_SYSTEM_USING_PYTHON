@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Order
+{% endblock %}
+
+{% block content %}
+
+<h2>Create Order</h2>
+
+<form method="POST">
+
+<label>Customer</label><br>
+
+<select name="customer_id" required>
+
+{% for customer in customers %}
+
+<option value="{{ customer.id }}">
+    {{ customer.customer_name }}
+</option>
+
+{% endfor %}
+
+</select>
+
+<br><br>
+
+<label>Product</label><br>
+
+<select name="product_id" required>
+
+{% for product in products %}
+
+<option value="{{ product.id }}">
+    {{ product.product_name }} - ₹{{ product.price }}
+</option>
+
+{% endfor %}
+
+</select>
+
+<br><br>
+
+<label>Quantity</label><br>
+
+<input
+    type="number"
+    name="quantity"
+    min="1"
+    value="1"
+    required>
+
+<br><br>
+
+<button type="submit">
+Create Order
+</button>
+
+</form>
+
+{% endblock %}
