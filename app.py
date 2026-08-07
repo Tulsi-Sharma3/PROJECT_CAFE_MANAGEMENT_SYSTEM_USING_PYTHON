@@ -29,7 +29,7 @@
 #     app.run(debug=True)
 
 # UPDATE:
-from flask import Flask,render_template, session, redirect
+from flask import Flask,render_template,session, redirect
 from routes.auth import auth
 from routes.product import product
 from routes.customer import customer

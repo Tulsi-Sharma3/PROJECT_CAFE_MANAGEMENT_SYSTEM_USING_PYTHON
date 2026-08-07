@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, session
 from database.db import get_connection
 
 order = Blueprint("order", __name__)
@@ -43,56 +43,122 @@ def add_order():
     cursor.execute("SELECT id, product_name, price FROM products")
     products = cursor.fetchall()
 
+    if "cart" not in session:
+        session["cart"] = []
+
     if request.method == "POST":
 
-        customer_id = request.form["customer_id"]
-        product_id = request.form["product_id"]
+        customer_id = int(request.form["customer_id"])
+
+        # Save customer when first item is added
+        # if "customer_id" not in session:
+        #     session["customer_id"] = customer_id
+
+        if not session["cart"]:
+            session["customer_id"] = customer_id
+            
+        # Don't allow changing customer
+        if session["customer_id"] != customer_id:
+            return "Finish the current order first."
+
+        product_id = int(request.form["product_id"])
         quantity = int(request.form["quantity"])
 
-        # Get selected product price
         cursor.execute(
-            "SELECT price FROM products WHERE id=%s",
+            "SELECT * FROM products WHERE id=%s",
             (product_id,)
         )
 
         product = cursor.fetchone()
 
-        price = float(product["price"])
-        total = price * quantity
+        subtotal = float(product["price"]) * quantity
 
-        # Save order
-        cursor.execute(
-            """
-            INSERT INTO orders(customer_id, total_amount)
-            VALUES(%s,%s)
-            """,
-            (customer_id, total)
-        )
+        cart = session["cart"]
 
-        order_id = cursor.lastrowid
+        cart.append({
+            "product_id": product["id"],
+            "product_name": product["product_name"],
+            "price": float(product["price"]),
+            "quantity": quantity,
+            "subtotal": subtotal
+        })
 
-        # Save order item
-        cursor.execute(
-            """
-            INSERT INTO order_items
-            (order_id, product_id, quantity, price, subtotal)
-            VALUES(%s,%s,%s,%s,%s)
-            """,
-            (order_id, product_id, quantity, price, total)
-        )
+        session["cart"] = cart
 
-        connection.commit()
+        return redirect("/add-order")
 
-        cursor.close()
-        connection.close()
-
-        return redirect("/orders")
-
+    grand_total = sum(item["subtotal"] for item in session["cart"])
     cursor.close()
     connection.close()
 
     return render_template(
         "add_order.html",
         customers=customers,
-        products=products
+        products=products,
+        grand_total=grand_total
     )
+
+@order.route("/place-order")
+def place_order():
+
+    if "cart" not in session or len(session["cart"]) == 0:
+        return redirect("/add-order")
+
+    connection = get_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    customer_id = session["customer_id"]
+
+    grand_total = sum(item["subtotal"] for item in session["cart"])
+
+    invoice_no = "INV-" + str(customer_id) + str(len(session["cart"]))
+
+    # Save order
+    cursor.execute("""
+        INSERT INTO orders
+        (customer_id, invoice_no, total_amount)
+        VALUES (%s, %s, %s)
+    """, (
+        customer_id,
+        invoice_no,
+        grand_total
+    ))
+
+    order_id = cursor.lastrowid
+
+    for item in session["cart"]:
+
+        cursor.execute("""
+            INSERT INTO order_items
+            (order_id, product_id, quantity, price, subtotal)
+            VALUES (%s,%s,%s,%s,%s)
+        """, (
+            order_id,
+            item["product_id"],
+            item["quantity"],
+            item["price"],
+            item["subtotal"]
+        ))
+
+        # Automatically reduce stock
+        cursor.execute("""
+            UPDATE products
+            SET stock = stock - %s
+            WHERE id = %s
+        """, (
+            item["quantity"],
+            item["product_id"]
+        ))
+
+    connection.commit()
+
+    cursor.close()
+    connection.close()
+
+    # Clear session
+    session.pop("cart", None)
+    session.pop("customer_id", None)
+
+    # return "Order Saved Successfully"
+
+    return redirect("/orders")

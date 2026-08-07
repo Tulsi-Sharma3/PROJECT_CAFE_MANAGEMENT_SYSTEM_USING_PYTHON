@@ -28,11 +28,13 @@ Add Order
 
 <label>Product</label><br>
 
-<select name="product_id" required>
+<select id="product" name="product_id" required>
 
 {% for product in products %}
 
-<option value="{{ product.id }}">
+<option
+    value="{{ product.id }}"
+    data-price="{{ product.price }}">
     {{ product.product_name }} - ₹{{ product.price }}
 </option>
 
@@ -46,10 +48,20 @@ Add Order
 
 <input
     type="number"
+    id="quantity"
     name="quantity"
     min="1"
     value="1"
     required>
+
+<br><br>
+
+<label>Total</label><br>
+
+<input
+    type="text"
+    id="total"
+    readonly>
 
 <br><br>
 
@@ -58,5 +70,77 @@ Create Order
 </button>
 
 </form>
+
+<hr>
+
+<h3>Current Cart</h3>
+
+<p>
+    Customer ID : {{ session.customer_id }}
+</p>
+
+<table border="1" cellpadding="10">
+
+<tr>
+    <th>Product</th>
+    <th>Price</th>
+    <th>Qty</th>
+    <th>Subtotal</th>
+</tr>
+
+<!-- {% set ns = namespace(total=0) %} -->
+
+{% for item in session.cart %}
+
+<tr>
+
+<td>{{ item.product_name }}</td>
+<td>₹{{ item.price }}</td>
+<td>{{ item.quantity }}</td>
+<td>₹{{ item.subtotal }}</td>
+
+</tr>
+
+<!-- {% set ns.total = ns.total + item.subtotal %} -->
+
+{% endfor %}
+
+</table>
+
+<!-- <h2>Grand Total : ₹{{ ns.total }}</h2> -->
+<h2>Grand Total : ₹{{ grand_total }}</h2>
+<br>
+
+<a href="/place-order">
+    <button style="background:green;color:white;padding:10px 20px;">
+        Place Order
+    </button>
+</a>
+
+<script>
+
+function calculateTotal() {
+
+    let product = document.getElementById("product");
+    let quantity = document.getElementById("quantity");
+
+    let price =
+        product.options[product.selectedIndex].dataset.price;
+
+    let total = price * quantity.value;
+
+    document.getElementById("total").value =
+        "₹" + total.toFixed(2);
+}
+
+document.getElementById("product")
+    .addEventListener("change", calculateTotal);
+
+document.getElementById("quantity")
+    .addEventListener("input", calculateTotal);
+
+calculateTotal();
+
+</script>
 
 {% endblock %}
