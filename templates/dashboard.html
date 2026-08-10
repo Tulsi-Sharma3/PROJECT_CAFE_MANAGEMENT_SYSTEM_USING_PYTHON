@@ -6,16 +6,249 @@ Dashboard
 
 {% block content %}
 
-<h2>Welcome {{ session.username }}</h2>
+<div class="dashboard-header">
 
-<br>
+    <div>
+        <h1>☕ Smart Cafe Dashboard</h1>
+        <p>Manage your cafe easily from one place.</p>
+    </div>
 
-<a href="/products">
-    <button> Manage Products</button>
-</a>
+</div>
 
-<a href="/logout">
-    <button>Logout</button>
-</a>
+
+<!-- =========================
+     STAT CARDS
+========================= -->
+
+<div class="dashboard-cards">
+
+    <div class="card">
+        <h3>📦 Total Products</h3>
+        <h1>{{ total_products }}</h1>
+        <a href="/products">View Products →</a>
+    </div>
+
+
+    <div class="card">
+        <h3>👥 Total Customers</h3>
+        <h1>{{ total_customers }}</h1>
+        <a href="/customers">View Customers →</a>
+    </div>
+
+
+    <div class="card">
+        <h3>🛒 Total Orders</h3>
+        <h1>{{ total_orders }}</h1>
+        <a href="/orders">View Orders →</a>
+    </div>
+
+
+    <div class="card">
+        <h3>💰 Total Revenue</h3>
+        <h1>₹{{ total_revenue }}</h1>
+        <span>All-time revenue</span>
+    </div>
+
+</div>
+
+
+<!-- =========================
+     RECENT ORDERS
+========================= -->
+
+<div class="dashboard-section">
+
+    <div class="section-title">
+
+        <h2>🛒 Recent Orders</h2>
+
+        <a href="/orders">
+            View All →
+        </a>
+
+    </div>
+
+
+    {% if recent_orders %}
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+                <th>Invoice</th>
+                <th>Customer</th>
+                <th>Total</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for order in recent_orders %}
+
+            <tr>
+
+                <td>
+                    <strong>
+                        {{ order.invoice_no }}
+                    </strong>
+                </td>
+
+                <td>
+                    {{ order.customer_name }}
+                </td>
+
+                <td>
+                    ₹{{ order.total_amount }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="empty-message">
+        📭 No orders available.
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================
+     LOW STOCK
+========================= -->
+
+<div class="dashboard-section">
+
+    <div class="section-title">
+
+        <h2>⚠️ Low Stock Alert</h2>
+
+        <a href="/products">
+            Manage Products →
+        </a>
+
+    </div>
+
+
+    {% if low_stock_products %}
+
+    <table class="dashboard-table">
+
+        <thead>
+
+            <tr>
+                <th>Product</th>
+                <th>Stock</th>
+                <th>Status</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for product in low_stock_products %}
+
+            <tr>
+
+                <td>
+                    {{ product.product_name }}
+                </td>
+
+                <td class="low-stock">
+                    {{ product.stock }}
+                </td>
+
+                <td>
+                    <span class="stock-warning">
+                        ⚠️ Low Stock
+                    </span>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="stock-good">
+        ✅ All products have sufficient stock.
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =========================
+     QUICK ACTIONS
+========================= -->
+
+<div class="dashboard-section">
+
+    <h2>⚡ Quick Actions</h2>
+
+    <div class="quick-actions">
+
+        <a href="/add-product" class="action-button">
+
+            <span class="action-icon">📦</span>
+
+            <span>Add Product</span>
+
+        </a>
+
+
+        <a href="/add-order" class="action-button">
+
+            <span class="action-icon">🛒</span>
+
+            <span>Add Order</span>
+
+        </a>
+
+
+        <a href="/customers" class="action-button">
+
+            <span class="action-icon">👥</span>
+
+            <span>Customers</span>
+
+        </a>
+
+
+        <a href="/products" class="action-button">
+
+            <span class="action-icon">📋</span>
+
+            <span>Products</span>
+
+        </a>
+
+
+        <a href="/orders" class="action-button">
+
+            <span class="action-icon">🧾</span>
+
+            <span>Orders</span>
+
+        </a>
+
+    </div>
+
+</div>
+
 
 {% endblock %}

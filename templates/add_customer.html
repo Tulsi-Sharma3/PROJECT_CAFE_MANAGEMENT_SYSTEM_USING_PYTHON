@@ -6,21 +6,56 @@ Add Customer
 
 {% block content %}
 
-<h2>Add Customer</h2>
+<div class="page-header">
+    <div>
+        <h2>👥 Add Customer</h2>
+        <p>Add a new cafe customer</p>
+    </div>
 
-<form method="POST">
+    <a href="/customers" class="primary-button">
+        ← Back to Customers
+    </a>
+</div>
 
-<label>Name</label><br>
-<input type="text" name="customer_name" required><br><br>
 
-<label>Phone</label><br>
-<input type="text" name="phone"><br><br>
+<div class="form-container">
 
-<label>Email</label><br>
-<input type="email" name="email"><br><br>
+    <form method="POST">
 
-<button type="submit">Save Customer</button>
+        <label>Customer Name</label>
 
-</form>
+        <input
+            type="text"
+            name="customer_name"
+            placeholder="Enter customer name"
+            required
+        >
+
+
+        <label>Phone</label>
+
+        <input
+            type="text"
+            name="phone"
+            placeholder="Enter phone number"
+        >
+
+
+        <label>Email</label>
+
+        <input
+            type="email"
+            name="email"
+            placeholder="Enter email address"
+        >
+
+
+        <button type="submit" class="primary-button">
+            ➕ Add Customer
+        </button>
+
+    </form>
+
+</div>
 
 {% endblock %}

@@ -65,6 +65,20 @@ def edit_customer(id):
     connection = get_connection()
     cursor = connection.cursor(dictionary=True)
 
+    # Get customer
+    cursor.execute(
+        "SELECT * FROM customers WHERE id=%s",
+        (id,)
+    )
+
+    customer_data = cursor.fetchone()
+
+    if not customer_data:
+        cursor.close()
+        connection.close()
+        return "Customer not found"
+
+    # Update customer
     if request.method == "POST":
 
         customer_name = request.form["customer_name"]
@@ -77,7 +91,12 @@ def edit_customer(id):
                 phone=%s,
                 email=%s
             WHERE id=%s
-        """, (customer_name, phone, email, id))
+        """, (
+            customer_name,
+            phone,
+            email,
+            id
+        ))
 
         connection.commit()
 
@@ -86,14 +105,13 @@ def edit_customer(id):
 
         return redirect("/customers")
 
-    cursor.execute("SELECT * FROM customers WHERE id=%s", (id,))
-    customer_data = cursor.fetchone()
-
     cursor.close()
     connection.close()
 
-    return render_template("edit_customer.html", customer=customer_data)
-
+    return render_template(
+        "edit_customer.html",
+        customer=customer_data
+    )
 
 @customer.route("/delete-customer/<int:id>")
 def delete_customer(id):

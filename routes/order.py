@@ -140,7 +140,7 @@ def place_order():
             item["subtotal"]
         ))
 
-        # Automatically reduce stock
+        # Automatically update stock
         cursor.execute("""
             UPDATE products
             SET stock = stock - %s
@@ -161,4 +161,64 @@ def place_order():
 
     # return "Order Saved Successfully"
 
-    return redirect("/orders")
+    return redirect(f"/invoice/{order_id}")
+
+# INVOICE (BILL GENERATION)
+@order.route("/invoice/<int:order_id>")
+def invoice(order_id):
+
+    connection = get_connection()
+
+    # Cursor for order
+    order_cursor = connection.cursor(dictionary=True)
+
+    order_cursor.execute("""
+        SELECT
+            orders.id,
+            orders.invoice_no,
+            orders.order_date,
+            orders.total_amount,
+            customers.customer_name,
+            customers.phone,
+            customers.email
+        FROM orders
+        JOIN customers
+        ON orders.customer_id = customers.id
+        WHERE orders.id = %s
+    """, (order_id,))
+
+    order = order_cursor.fetchone()
+
+    order_cursor.close()
+
+
+    # Cursor for items
+    item_cursor = connection.cursor(dictionary=True)
+
+    item_cursor.execute("""
+        SELECT
+            products.product_name,
+            order_items.quantity,
+            order_items.price,
+            order_items.subtotal
+        FROM order_items
+        JOIN products
+        ON order_items.product_id = products.id
+        WHERE order_items.order_id = %s
+    """, (order_id,))
+
+    items = item_cursor.fetchall()
+
+    item_cursor.close()
+    connection.close()
+
+
+    if not order:
+        return "Order not found"
+
+
+    return render_template(
+        "invoice.html",
+        order=order,
+        items=items
+    )

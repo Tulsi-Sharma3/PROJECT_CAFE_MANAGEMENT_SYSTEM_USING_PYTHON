@@ -6,36 +6,135 @@ Orders
 
 {% block content %}
 
-<h2>Order History</h2>
+<div class="page-header">
 
-<a href="/add-order">
-    <button>Create Order</button>
-</a>
+    <div>
+        <h2>🛒 Orders</h2>
+        <p>View and manage all cafe orders</p>
+    </div>
 
-<br><br>
+    <a href="/add-order" class="primary-button">
+        ➕ New Order
+    </a>
 
-<table border="1" cellpadding="10">
+</div>
 
-<tr>
-    <th>Order ID</th>
-    <th>Customer</th>
-    <th>Date</th>
-    <th>Total</th>
-</tr>
 
-{% for order in orders %}
+<!-- SEARCH -->
 
-<tr>
+<div class="product-toolbar">
 
-<td>{{ order.id }}</td>
-<td>{{ order.customer_name }}</td>
-<td>{{ order.order_date }}</td>
-<td>₹{{ order.total_amount }}</td>
+    <input
+        type="text"
+        id="orderSearch"
+        placeholder="🔍 Search by customer or invoice..."
+        class="product-search"
+    >
 
-</tr>
+</div>
 
-{% endfor %}
 
-</table>
+<!-- ORDERS TABLE -->
+
+<div class="products-container">
+
+    <table class="products-table">
+
+        <thead>
+
+            <tr>
+                <th>ID</th>
+                <th>Invoice</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="orderTable">
+
+            {% for order in orders %}
+
+            <tr>
+
+                <td>
+                    {{ order.id }}
+                </td>
+
+                <td>
+                    <strong>
+                        {{ order.invoice_no or "-" }}
+                    </strong>
+                </td>
+
+                <td>
+                    {{ order.customer_name }}
+                </td>
+
+                <td>
+                    {{ order.order_date }}
+                </td>
+
+                <td>
+                    <strong>
+                        ₹{{ order.total_amount }}
+                    </strong>
+                </td>
+
+                <td>
+
+                    <a
+                        href="/invoice/{{ order.id }}"
+                        class="edit-button">
+                        🧾 View Invoice
+                    </a>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script>
+
+const searchInput =
+    document.getElementById("orderSearch");
+
+const table =
+    document.getElementById("orderTable");
+
+searchInput.addEventListener("input", function () {
+
+    const search =
+        this.value.toLowerCase();
+
+    const rows =
+        table.getElementsByTagName("tr");
+
+    for (let row of rows) {
+
+        const text =
+            row.textContent.toLowerCase();
+
+        if (text.includes(search)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

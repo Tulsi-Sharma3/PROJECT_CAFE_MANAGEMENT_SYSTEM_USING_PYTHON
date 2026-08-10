@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}
+Invoice
+{% endblock %}
+
+{% block content %}
+
+<div class="invoice-page">
+
+    <!-- Invoice Header -->
+
+    <div class="invoice-header">
+
+        <div class="invoice-brand">
+
+            <div class="invoice-logo">
+                ☕
+            </div>
+
+            <div>
+                <h1>Smart Cafe</h1>
+                <p>Cafe Management System</p>
+            </div>
+
+        </div>
+
+
+        <div class="invoice-info">
+
+            <h2>INVOICE</h2>
+
+            <p>
+                <strong>Invoice No:</strong>
+                {{ order.invoice_no }}
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                {{ order.order_date }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    <!-- Customer -->
+
+    <div class="customer-info">
+
+        <h3>Bill To</h3>
+
+        <p>
+            <strong>{{ order.customer_name }}</strong>
+        </p>
+
+        {% if order.phone %}
+        <p>📱 {{ order.phone }}</p>
+        {% endif %}
+
+        {% if order.email %}
+        <p>📧 {{ order.email }}</p>
+        {% endif %}
+
+    </div>
+
+
+    <!-- Items -->
+
+    <table class="invoice-table">
+
+        <thead>
+
+            <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for item in items %}
+
+            <tr>
+
+                <td>
+                    {{ loop.index }}
+                </td>
+
+                <td>
+                    {{ item.product_name }}
+                </td>
+
+                <td>
+                    ₹{{ item.price }}
+                </td>
+
+                <td>
+                    {{ item.quantity }}
+                </td>
+
+                <td>
+                    ₹{{ item.subtotal }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <!-- Total -->
+
+    <div class="invoice-total">
+
+        <div>
+            <span>Total Amount</span>
+
+            <strong>
+                ₹{{ order.total_amount }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- Footer -->
+
+    <div class="invoice-footer">
+
+        <p>Thank you for visiting Smart Cafe! ☕</p>
+
+        <button
+            onclick="window.print()"
+            class="print-button">
+
+            🖨️ Print Invoice
+
+        </button>
+
+        <a
+            href="/orders"
+            class="back-button">
+
+            ← Back to Orders
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

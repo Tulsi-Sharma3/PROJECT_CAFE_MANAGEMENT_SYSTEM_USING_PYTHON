@@ -2,49 +2,160 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}Smart Cafe{% endblock %}
-    </title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Smart Cafe{% endblock %}</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 
 <body>
 
-<header>
+<div class="app-container">
 
-    <h1>☕ Smart Cafe Management System</h1>
+    <!-- SIDEBAR -->
 
-</header>
+    <aside class="sidebar">
 
-<nav>
+        <div class="logo-container">
 
-    <a href="/dashboard">🏠 Dashboard</a>
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="Smart Cafe Logo"
+                class="sidebar-logo">
 
-    <a href="/products">📦 Products</a>
+        </div>
 
-    <a href="/customers">👥 Customers</a>
 
-    <a href="/orders">🛒 Orders</a>
+        <nav class="sidebar-nav">
 
-    <a href="/logout">🚪 Logout</a>
+            <a href="/dashboard"
+                class="nav-item {% if request.path == '/dashboard' %}active{% endif %}">
+                <span class="nav-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
 
-</nav>
+            <a href="/products"
+                class="nav-item {% if request.path == '/products' %}active{% endif %}">
+                <span class="nav-icon">📦</span>
+                <span>Products</span>
+            </a>
 
-<hr>
+            <a href="/customers"
+                class="nav-item {% if request.path == '/customers' %}active{% endif %}">
+                <span class="nav-icon">👥</span>
+                <span>Customers</span>
+            </a>
 
-<main>
+            <a href="/orders"
+                class="nav-item {% if request.path == '/orders' %}active{% endif %}">
+                <span class="nav-icon">🛒</span>
+                <span>Orders</span>
+            </a>
 
-    {% block content %}
+            <a href="/add-order"
+                class="nav-item {% if request.path == '/add-order' %}active{% endif %}">
+                <span class="nav-icon">➕</span>
+                <span>New Order</span>
+            </a>
 
-    {% endblock %}
+            <a href="/add-product"
+                class="nav-item {% if request.path == '/add-product' %}active{% endif %}">
+                <span class="nav-icon">🍔</span>
+                <span>Add Product</span>
+            </a>
+            <!-- <a href="/dashboard" class="nav-item">
+                🏠
+                <span>Dashboard</span>
+            </a>
 
-</main>
+            <a href="/products" class="nav-item">
+                📦
+                <span>Products</span>
+            </a>
+
+            <a href="/orders" class="nav-item">
+                🛒
+                <span>Orders</span>
+            </a>
+
+            <a href="/customers" class="nav-item">
+                👥
+                <span>Customers</span>
+            </a>
+
+            <a href="/add-order" class="nav-item">
+                ➕
+                <span>Add Order</span>
+            </a>
+
+            <a href="/add-product" class="nav-item">
+                🍔
+                <span>Add Product</span>
+            </a> -->
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="/login" class="nav-item">
+                🚪
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN AREA -->
+
+    <div class="main-area">
+
+        <header class="topbar">
+
+            <div>
+                <h3>☕ Smart Cafe</h3>
+            </div>
+
+            <div class="topbar-right">
+
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    class="search-box">
+
+                <span class="notification">
+                    🔔
+                </span>
+
+                <div class="admin">
+                    👤
+                    <span>Admin</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <main class="content">
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+    </div>
+
+</div>
 
 </body>
-
 </html>
