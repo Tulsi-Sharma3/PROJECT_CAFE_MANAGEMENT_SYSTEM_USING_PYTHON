@@ -114,16 +114,56 @@ def edit_customer(id):
     )
 
 @customer.route("/delete-customer/<int:id>")
+
+@customer.route("/delete-customer/<int:id>")
 def delete_customer(id):
 
     connection = get_connection()
     cursor = connection.cursor()
 
-    cursor.execute("DELETE FROM customers WHERE id=%s", (id,))
+    try:
+        # Check whether customer has existing orders
+        cursor.execute(
+            "SELECT COUNT(*) FROM orders WHERE customer_id=%s",
+            (id,)
+        )
 
-    connection.commit()
+        order_count = cursor.fetchone()[0]
 
-    cursor.close()
-    connection.close()
+        if order_count > 0:
+            return (
+                "Customer cannot be deleted because orders "
+                "are linked to this customer. Please preserve "
+                "the customer record to maintain order history."
+            ), 400
 
-    return redirect("/customers")
+        # Delete customer if no orders exist
+        cursor.execute(
+            "DELETE FROM customers WHERE id=%s",
+            (id,)
+        )
+
+        connection.commit()
+
+        return redirect("/customers")
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        cursor.close()
+        connection.close()
+# def delete_customer(id):
+
+#     connection = get_connection()
+#     cursor = connection.cursor()
+
+#     cursor.execute("DELETE FROM customers WHERE id=%s", (id,))
+
+#     connection.commit()
+
+#     cursor.close()
+#     connection.close()
+
+#     return redirect("/customers")
