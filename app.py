@@ -7,11 +7,11 @@ from routes.order import order
 
 from database.db import get_connection
 
+from config.db_config import SECRET_KEY
 
 app = Flask(__name__)
 
-app.secret_key = "REMOVED"
-
+app.config["SECRET_KEY"] = SECRET_KEY
 
 # Register Blueprints
 app.register_blueprint(auth)
